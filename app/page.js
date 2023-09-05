@@ -20,9 +20,9 @@ class Square extends React.Component {
   render() {
     return (
       <div className="square" style={
-        ((this.props.row < this.props.board.length) && (this.props.column < this.props.board[this.props.row].length) &&(this.props.board[this.props.row][this.props.column] == true)) ?
-            ((this.props.row + this.props.column) % 2 == 0 ? { backgroundColor: "red" } : { backgroundColor: "white" }) :
-            { backgroundColor: "green" }
+        ((this.props.row < this.props.board.length) && (this.props.column < this.props.board[this.props.row].length) && (this.props.board[this.props.row][this.props.column] == true)) ?
+          ((this.props.row + this.props.column) % 2 == 0 ? { backgroundColor: "red" } : { backgroundColor: "white" }) :
+          { backgroundColor: "green" }
       }
         onClick={() => {
           var brd = this.props.board;
@@ -43,7 +43,6 @@ class Square extends React.Component {
             brd[this.props.row][this.props.column] = false;
           else
             brd[this.props.row][this.props.column] = true;
-
 
           while (!brd[brd.length - 1].includes(true)) {
             brd.pop();
@@ -99,8 +98,21 @@ class Dboard extends React.Component {
   }
 }
 
-function BuildBoard({ setStep, board, setBoard }) {
+function textSetBoard(setBoard) {
+  var txtbrd = document.getElementById("setBoardTextArea").value;
+  txtbrd = txtbrd.split("\n");
+  var reboard = [];
+  for (var i = 0; i < txtbrd.length - 1; i++) {
+    reboard.push(JSON.parse(txtbrd[i].slice(0, -1)));
+  }
+  reboard.push(JSON.parse(txtbrd[txtbrd.length - 1]));
+  if (reboard.length > 0) {
+    return (setBoard(reboard));
+  }
+  return;
+}
 
+function BuildBoard({ setStep, board, setBoard }) {
   return (
     <div className="board">
       <Dboard board={board} setBoard={setBoard} />
@@ -128,7 +140,8 @@ function BuildBoard({ setStep, board, setBoard }) {
       <br />
       [true, true, true, false, false, true, true, true]
       <br />
-      <textarea title="gameMap"></textarea>  <button>SET</button>
+      <br />
+      <textarea title="gameMap" id="setBoardTextArea" style={{ backgroundColor: "white", color: "black" }}></textarea>  <button onClick={() => { textSetBoard(setBoard) }}>SET</button>
       <br />
       <br />
       <button onClick={() => { setStep("menu") }}>menu</button>
@@ -142,12 +155,36 @@ function BuildBoard({ setStep, board, setBoard }) {
 
 function BuildPieces({ setStep, pieces, setPieces }) {
   pieces = [];
+  var buildPiecestxtl1 = '{ isPawn: true, name: "pawn", movesTo: [[0, 1]], captures: [[1, 1], [-1, 1]] },';
+  var buildPiecestxtl2 = '{ name: "rook", movesTo: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false },';
+  var buildPiecestxtl3 = '{ name: "knight", movesTo: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], captures: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], flies: true },'
+  var buildPiecestxtl4 = '{ name: "bishop", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], flies: false },'
+  var buildPiecestxtl5 = '{ name: "queen", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false },'
+  var buildPiecestxtl6 = '{ isKing: true, name: "king", movesTo: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]], captures: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]], flies: false }'
 
   return (
     <div className="pieces">
       <div>
-      "BuildPieces"
+        "BuildPieces"
       </div>
+      <br />
+      exemple:
+      <br />
+      <br />
+      {buildPiecestxtl1}
+      <br />
+      {buildPiecestxtl2}
+      <br />
+      {buildPiecestxtl3}
+      <br />
+      {buildPiecestxtl4}
+      <br />
+      {buildPiecestxtl5}
+      <br />
+      {buildPiecestxtl6}
+      <br />
+      <br />
+      <textarea title="gameMap" id="SetPiecesTextArea" style={{ backgroundColor: "white", color: "black" }}></textarea>  <button onClick={() => { textSetPieces(setPieces) }}>SET</button>
       <br />
       <br />
       <button onClick={() => { setStep("menu") }}>menu</button>
@@ -165,7 +202,7 @@ function PlacePieces({ setStep, board, pieces, gameMap, setGameMap }) {
   return (
     <div className="pieces">
       <div>
-      "PlacePieces"
+        "PlacePieces"
       </div>
       <br />
       <br />
@@ -184,7 +221,7 @@ function Game({ setStep, gameMap, setGameMap }) {
   return (
     <div className="game">
       <div>
-      "Game"
+        "Game"
       </div>
       <button onClick={() => { setStep("menu") }}>menu</button>
     </div>
@@ -216,26 +253,25 @@ export default function Home() {
   ]);
   var [pieces, setPieces] = React.useState([
     { isPawn: true, name: "pawn", movesTo: [[0, 1]], captures: [[1, 1], [-1, 1]] },
-    { name: "rook", movesTo: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false},
-    { name: "knight", movesTo: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], captures: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], flies: true},
-    { name: "bishop", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], flies: false},
-    { name: "queen", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false},
-    { isKing: true, name: "king", movesTo: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1,-1]], captures: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1,-1]], flies: false}
+    { name: "rook", movesTo: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false },
+    { name: "knight", movesTo: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], captures: [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]], flies: true },
+    { name: "bishop", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf]], flies: false },
+    { name: "queen", movesTo: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], captures: [[inf, inf], [inf, -inf], [-inf, inf], [-inf, -inf], [0, inf], [0, -inf], [inf, 0], [-inf, 0]], flies: false },
+    { isKing: true, name: "king", movesTo: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]], captures: [[1, 1], [1, 0], [1, -1], [0, 1], [0, -1], [-1, 1], [-1, 0], [-1, -1]], flies: false }
   ]);
   var [gameMap, setGameMap] = React.useState([]);
 
-
   switch (step) {
     case "buildBoard":
-      return (<div><BuildBoard setStep={setStep} board={board} setBoard={setBoard} /><br/><button onClick={()=>{ console.log("board", board, "pieces", pieces, "gameMap", gameMap)}}>Logall</button></div>);
+      return (<div><BuildBoard setStep={setStep} board={board} setBoard={setBoard} /><br /><button onClick={() => { console.log("board", board, "pieces", pieces, "gameMap", gameMap) }}>Logall</button></div>);
     case "buildPieces":
-      return (<div><BuildPieces setStep={setStep} pieces={pieces} setPieces={setPieces} /><br/><button onClick={()=>{ console.log("board", board, "pieces", pieces, "gameMap", gameMap)}}>Logall</button></div>);
+      return (<div><BuildPieces setStep={setStep} pieces={pieces} setPieces={setPieces} /><br /><button onClick={() => { console.log("board", board, "pieces", pieces, "gameMap", gameMap) }}>Logall</button></div>);
     case "placePieces":
-      return (<div><PlacePieces setStep={setStep} board={board} pieces={pieces} gameMap={gameMap} setGameMap={setGameMap} /><br/><button onClick={()=>{ console.log("board", board, "pieces", pieces, "gameMap", gameMap)}}>Logall</button></div>);
+      return (<div><PlacePieces setStep={setStep} board={board} pieces={pieces} gameMap={gameMap} setGameMap={setGameMap} /><br /><button onClick={() => { console.log("board", board, "pieces", pieces, "gameMap", gameMap) }}>Logall</button></div>);
     case "game":
-      return (<div><Game setStep={setStep} gameMap={gameMap} setGameMap={setGameMap} /><br/><button onClick={()=>{ console.log("board", board, "pieces", pieces, "gameMap", gameMap)}}>Logall</button></div>);
+      return (<div><Game setStep={setStep} gameMap={gameMap} setGameMap={setGameMap} /><br /><button onClick={() => { console.log("board", board, "pieces", pieces, "gameMap", gameMap) }}>Logall</button></div>);
     default:
-      return (<div><Menu setStep={setStep} /><br/><button onClick={()=>{ console.log("board", board, "pieces", pieces, "gameMap", gameMap)}}>Logall</button></div>);
+      return (<div><Menu setStep={setStep} /><br /><button onClick={() => { console.log("board", board, "pieces", pieces, "gameMap", gameMap) }}>Logall</button></div>);
   }
 }
 
